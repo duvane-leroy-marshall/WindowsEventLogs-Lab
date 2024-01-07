@@ -30,5 +30,37 @@ This lab covers the following:
 - <b>HackTheBox Pwnbox Linux</b>
 - <b>Windows 10 Virtual Machine</b>
 
-<h2>Windows Event Logs</h2>
-In this first part, we will be opening a saved log by the title of <b>DLLHijack</b> to investigate for any malicious activities.
+<h2>Guided Lab: Analyzing Evil With Sysmon & Event Logs</h2>
+In order to use Sysmon, we must first download it. We can do this by downloading it from the official Microsoft documentation website. Once downloaded, we can install it by using the command prompt as an administrator.
+<br />
+<br />
+
+<p align="center">
+Installing Sysmon: <br/>
+<img src="https://i.imgur.com/yMGVaQG.jpg" height="80%" width="80%" alt="Sysmon Install"/>
+<br />
+<br />
+
+<h2>Configuring Sysmon for DLL Hijacks</h2>
+To detect a DLL hijack, we need to focus on Sysmon's <b>event ID 7</b>, which corresponds to module load events. To achieve this, we need to modfiy the <b>sysmonconfig-export.xml</b> file. There we will make our modifications and update the file through the command prompt.
+<br />
+<br />
+
+<p align="center">
+The Sysmon Configuration File: <br/>
+<img src="https://i.imgur.com/O6zXMBa.jpg" height="80%" width="80%" alt="Sysmon Config File"/>
+<br />
+<br />
+Sysmon Event ID 7 Settings: <br/>
+<img src="https://i.imgur.com/aiKiF02.jpg" height="80%" width="80%" alt="Sysmon Event ID 7 Include"/>
+<br />
+<b>Here we will have to change the "include" to "exclude". This ensures that nothing is excluded, allowing us to capture all the necessary data.</b>
+<br />
+The Change: <br/>
+<img src="https://i.imgur.com/HAJ2ryZ.jpg" height="80%" width="80%" alt="Sysmon Event ID 7 Exclude"/>
+<br />
+<br />
+Updating the Configuration File: <br/>
+<img src="https://i.imgur.com/lL8w9fw.jpg" height="80%" width="80%" alt="Update Sysmon Config File"/>
+
+<h2>Detection Example 1: Detecting DLL Hijacking</h2>
