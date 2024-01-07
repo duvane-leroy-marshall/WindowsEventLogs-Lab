@@ -64,3 +64,39 @@ Updating the Configuration File: <br/>
 <img src="https://i.imgur.com/lL8w9fw.jpg" height="80%" width="80%" alt="Update Sysmon Config File"/>
 
 <h2>Detection Example 1: Detecting DLL Hijacking</h2>
+With the modified Sysmon configuration, we can start observing Sysmon's event ID 7. To view these events, we navigate to the Event Viewer along this path: <b>Applications and Services -> Microsoft -> Windows -> Sysmon</b>.
+<br />
+<br />
+We will be using <b>calc.exe</b> and <b>WININET.dll</b> as an example. To simplify the process, we can utilize Stephen Fewer's "hello world" <b>reflective DLL</b>. We will do this by renaming <b>reflective_dll.x64.dll</b> to WININET.dll, copying calc.exe from <b>C:\Windows\System32</b> along with WININET.dll to a writable directory (such as the Desktop folder), and executing calc.exe, we achieve success. Instead of the Calculator application, a MessageBox is displayed.
+<br />
+<br />
+
+<p align="center">
+The Reflective DLL Injection: <br/>
+<img src="https://i.imgur.com/FPiruAC.jpg" height="80%" width="80%" alt="Reflective DLL Injection"/>
+<br />
+<br />
+Event Viewer Log Filter: <br/>
+<img src="https://i.imgur.com/jgPmIaT.jpg" height="80%" width="80%" alt="Event Viwer Filter"/>
+<br />
+<b>Next we will analyze the hijack in our Event Viewer. First we will filter the event logs to focus on event ID 7. We do this by clicking "Filter Current Log..."</b>
+<br />
+<br />
+The Event Viewer Find Function: <br/>
+<img src="https://i.imgur.com/FW692u4.jpg" height="80%" width="80%" alt="Find"/>
+<br />
+<b>Since we know the injection came from clicking the calc.exe, we can use the "Find..." feature to search for all events associated with the hijack.</b>
+<br />
+<br />
+Our Culprit: <br/>
+<img src="https://i.imgur.com/vlaC7M3.jpg height="80%" width="80%" alt="Calc Location"/>
+<br />
+<img src="https://i.imgur.com/SJWr3Bz.jpg" height="80%" width="80%" alt="Calc Signature"/>
+<br />
+<b>The above images show us a clearer picture on the reflective dll injections. Here, we can examine three indicators of compromise (IOCs):
+  
+  - "calc.exe", originally located in System32, should not be found in a writable directory. Therefore, a copy of "calc.exe" in a writable directory serves as an IOC, as it should always reside in System32 or potentially Syswow64.
+  - "WININET.dll", originally located in System32, should not be loaded outside of System32 by calc.exe. If instances of "WININET.dll" loading occur outside of System32 with "calc.exe" as the parent process, it indicates a DLL hijack within calc.exe. While caution is necessary when alerting on all instances of "WININET.dll" loading outside of System32 (as some applications may package specific DLL versions for stability), in the case of "calc.exe", we can confidently assert a hijack due to the DLL's unchanging name, which attackers cannot modify to evade detection.
+  - The original "WININET.dll" is Microsoft-signed, while our injected DLL remains unsigned.</b>
+
+<h2>Detection Example 2: Detecting Unmanaged PowerShell/C-Sharp Injection</h2>
