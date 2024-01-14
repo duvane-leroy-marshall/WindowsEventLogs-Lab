@@ -30,7 +30,7 @@ This lab covers the following:
 - <b>HackTheBox Pwnbox Linux</b>
 - <b>Windows 10 Virtual Machine</b>
 
-<h2>Guided Lab: Analyzing Evil With Sysmon & Event Logs</h2>
+<h2>Guided Lab Part 1: Analyzing Evil With Sysmon & Event Logs</h2>
 In order to use Sysmon, we must first download it. We can do this by downloading it from the official Microsoft documentation website. Once downloaded, we can install it by using the command prompt as an administrator.
 <br />
 <br />
@@ -147,3 +147,21 @@ Sysmon Event ID 7 Regarding spoolsv.exe Injection: <br/>
 <b>We can refer to both the "Modules" tab of Process Hacker and the Sysmon Event ID 7, we can examine the DLL load information to validate the presence of "clr.dll" or "clrjit.dll".</b>
 
 <h2>Detection Example 3: Detecting Credential Dumping</h2>
+Another critical aspect of cybersecurity is detecting credential dumping activities. One widely used tool for credential dumping is <b>Mimikatz</b>. One specific command, <b>"sekurlsa::logonpasswords"</b>, enables the dumping of password hashes or plaintext passwords by accessing the <b>Local Security Authority Subsystem Service (LSASS)</b>. LSASS is responsible for managing user credentials and is a primary target for credential-dumping.
+<br />
+<br />
+We will be executing this attack ourselves to study it:
+<br />
+<br />
+
+<p align="center">
+Mimikatz in Action: <br/>
+<img src="https://i.imgur.com/2sKoekn.jpg" height="80%" width="80%" alt="Mimikatz"/>
+<br />
+<br />
+Sysmon Event ID 10: <br/>
+<img src="https://i.imgur.com/rVSnlHl.jpg" height="80%" width="80%" alt="Sysmon Event ID 10"/>
+<br />
+<b>To detect this activity, we will rely on a different Sysmon event. Instead of focusing on DLL loads, we shift our attention to process access events. This event is Sysmon's event ID 10. In the above picture, we observe a random file ("AgentEXE.exe") from a random folder ("Downloads") attempting to access LSASS, it indicates unusual behavior. Additionally, the "SourceUser" being different from the "TargetUser" further emphasizes the abnormaliy.</b>
+
+<h2>Guided Lab Part 2: Event Tracing for Windows (ETW)</h2>
