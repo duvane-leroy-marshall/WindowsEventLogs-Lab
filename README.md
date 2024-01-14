@@ -165,3 +165,23 @@ Sysmon Event ID 10: <br/>
 <b>To detect this activity, we will rely on a different Sysmon event. Instead of focusing on DLL loads, we shift our attention to process access events. This event is Sysmon's event ID 10. In the above picture, we observe a random file ("AgentEXE.exe") from a random folder ("Downloads") attempting to access LSASS, it indicates unusual behavior. Additionally, the "SourceUser" being different from the "TargetUser" further emphasizes the abnormaliy.</b>
 
 <h2>Guided Lab Part 2: Event Tracing for Windows (ETW)</h2>
+What is ETW? According to Microsoft, Event Tracing for Windows (ETW) is a general-purpse, high-speed tracing facility provided by the Windows operating system. We can use it to bolster our defense capabilities thanks to its high-performance event tracing mechanism.
+<br />
+<br />
+We will utilize ETW to investigate attacks that may evade detection if we rely solely on Sysmon for monitoring and analysis.
+
+<h2>Detection Example 1: Detecting Strange Parent-Child Relationships</h2>
+Abnormal parent-child relationships among processes can be indicative of malicious activities. In standard Windows environments, certain processes never call or spawn others. For example, it is highly unlikely to see <b>"calc.exe"</b> spawning <b>"cmd.exe"</b> in a normal Windows environment.
+<br />
+<br />
+By utilizing Process Hacker, we can explore parent-child relationships within Windows.
+<br />
+<br />
+
+<p align="center">
+The Process Hacker Hierarchy: <br/>
+<img src="https://i.imgur.com/Exu3WVY.jpg" height="80%" width="80%" alt="Process Hacker Hierarchy"/>
+<br />
+<b>Sorting the processes by dropdowns in the Processes view reveals a hierarchical representation of the parent-child relationships.</b>
+<br />
+<br />
