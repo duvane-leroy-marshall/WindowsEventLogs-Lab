@@ -100,3 +100,50 @@ Our Culprit: <br/>
   - The original "WININET.dll" is Microsoft-signed, while our injected DLL remains unsigned.</b>
 
 <h2>Detection Example 2: Detecting Unmanaged PowerShell/C-Sharp Injection</h2>
+C# is considered a "managed" language, meaning it requires a backend runtime to execute its code. As cybersecurity defenders, we can leverage knowledge to detect unusual C# injections or executions within our environment. To accomplish this, we can utilize a useful utility called <b>Process Hacker</b>.
+<br />
+<br />
+
+<p align="center">
+The Process Hacker: <br/>
+<img src="https://i.imgur.com/zBrw8xD.jpg" height="80%" width="80%" alt="Process Hacker"/>
+<br />
+<br />
+powershell.exe in Process Hacker: <br/>
+<img src="https://i.imgur.com/R4C9qFG.jpg" height="80%" width="80%" alt="powershell.exe"/>
+<br />
+<b>In Process Hacker, we can sort the processes by name, and can identify what they do by their colour-coded distinctions. Notably, "powershell.exe", a managed process, is highlighted in green compared to other processes. Hovering over powershell.exe reveals the label "Process is managed (.NET)."</b>
+<br />
+<br />
+Powershell Properties: <br/>
+<img src="https://i.imgur.com/ElEmuC8.jpg" height="80%" width="80%" alt="Powershell Properties"/>
+<br />
+<b>We can examine the powershell.exe module loads by right-clicking on it, clicking "Properties", and navigating to "Modules". Here we can find revelant information. The presence of "Microsoft .NET Runtime...", clr.dll, and clrjit.dll should attract our attention. These two DLLs are used when C# code is ran as part of the runtime to execute the bytecode. If we observe these DLLs loaded in processes that typically do not require them, it suggets a potential execute-assembly or unmanaged PowerShell injection attack.</b>
+<br />
+<br />
+Injecting the unmanaged PowerShell-like DLL: <br/>
+<img src="https://i.imgur.com/iO1n21j.jpg" height="80%" width="80%" alt="CMD Injection"/>
+<br />
+<b>To showcase unmanaged PowerShell injection, we can inject an unmanaged PowerShell-like DLL into a random process, such as "spoolsv.exe". We can do this by utilizing the "Invoke-PSInject.ps1" in the manner above.</b>
+<br />
+<br />
+spoolsv.exe Before Injection: <br/>
+<img src="https://i.imgur.com/pAITLxd.jpg" height="80%" width="80%" alt="Before Injection"/>
+<br />
+<br />
+spoolsv.exe After Injection: <br/>
+<img src="https://i.imgur.com/Hosvhcy.jpg" height="80%" width="80%" alt="After Injection"/>
+<br />
+<b>After the injection, we observe that "spoolsv.exe" transitions from an unmanaged to a managed state.</b>
+<br />
+<br />
+spoolsv.exe Properties After Injection: <br/>
+<img src="https://i.imgur.com/1ifftrK.jpg" height="80%" width="80%" alt="spoolsv.exe Properties After Injection"/>
+<br />
+<br />
+Sysmon Event ID 7 Regarding spoolsv.exe Injection: <br/>
+<img src="https://i.imgur.com/6DA0vGM.jpg" height="80%" width="80%" alt="spoolsv.exe Sysmon Event ID 7"/>
+<br />
+<b>We can refer to both the "Modules" tab of Process Hacker and the Sysmon Event ID 7, we can examine the DLL load information to validate the presence of "clr.dll" or "clrjit.dll".</b>
+
+<h2>Detection Example 3: Detecting Credential Dumping</h2>
